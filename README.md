@@ -1,6 +1,6 @@
-# jautocorrect
+# jautograde
 
-Student Java code autocorrect
+Student Java code automatic grading
 
 (This is work in progress !)
 
