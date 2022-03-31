@@ -58,20 +58,23 @@ You need to:
   2. provide the test scripts
   3. provide the expected output for each line of the test scripts
 
-Each program is tested with different arguments, these need to be given for each assignment index in a file named `args1.txt` (or `args2.txt` for index=2, `args3.txt` for index=3,...).
+Each program is tested with different arguments, these need to be given for each assignment index in a file named `args1.txt` (or `args2.txt` for index=2, `args3.txt` for index=3,...), located in folder `input_args/`.
 These files will hold the command line arguments to be given, with as first element the number of arguments.
 Comments may be given by putting `#` as first character, empty lines are allowed.
 
-For example, this file:
+For example, this file content:
 ```
 0
 2 A 42
 ```
-will generated two runs of the program, one with no arguments, the other with 2 arguments, i.e. if the program name is `Abc.java` and the assignement index is 5, then this is equivalent to running:
+will generated two runs of the program, one with no arguments, the other with 2 arguments, i.e. if the program name is `Abc` and the assignement index is 5, then this is equivalent to running this in the `exec/` folder:
 ```
 $ java Abc5.java > stdout50.txt
 $ java Abc5.java a 42 > stdout51.txt
 ```
+Once this is done, the script will then compare the generated output files with the ones having the same name, in folder `expected/`.
+
+
 ## Tips
 
 Point 3 above can be quite tedious. So what you can do is try a "dry run" without any files in the `expected/` folder and use the output by a given student (that you will find in the 
