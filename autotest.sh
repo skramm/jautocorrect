@@ -1,18 +1,18 @@
 set +x
 
-# nom fichier extrait de l'archive récupérée via Moodle
-# PPPPP NNNNN_XXXXXXX_assignsubmission_file_FFFFFC.EEE
-# PPPPP: prénom
-# NNNNN: nom
-# XXXXXXX: numéro étudiant
-# FFFFF: nom fichier
-# C: code-index
-# EEE: extension fichier
+# homepage: https://github.com/skramm/jautocorrect
 
-# Paramétrage
+# Required filename (without added assignment index)
 FILE=Test
+
+# Required filename extension
 EXT=java
+
+# autorized assignment indexes
 INDEXES=(1 2)
+
+# output log file
+OUTFILE=log.csv
 
 function compare
 {
@@ -45,14 +45,14 @@ function test
 		./test$1.sh
 		cd ..
 		compare $1
-		echo "$name;$num;score=$sum1" >>log.txt
+		echo "$name;$num;score=$sum1" >>$OUTFILE
 	else
 		cd ..
-		echo "$name;$num;compile failure" >>log.txt
+		echo "$name;$num;compile failure" >>$OUTFILE
 	fi
 }
 
-echo "Bilan" >log.txt
+echo "Bilan" >$OUTFILE
 for a in src/*.$EXT
 do
 	bn=$(basename "$a")
@@ -60,18 +60,45 @@ do
 	IFS='_' read -ra ADDR <<< "$bn"
 	name=${ADDR[0]}
 	num=${ADDR[1]}
+	na=${ADDR[4]}
+	printf "%s,%s" $name $num >> $OUTFILE
+# separate filename and extension
+	na1=${na%.*}
+	na2=${na#*.}
+# get assignment name and index
+	sna=$((${#na1}-1))
+	an=${na1:0:sna}
+	index=${na1:sna:1}
+	echo "bn=$bn na=$na na1=$na1 na2=$na2 sna=$sna an=$an, index=$index"
 
-	if [ ${ADDR[4]} = "${FILE}1.$EXT" ]
+# check that filename is correct
+	if [ "$an" = "$FILE" ]
 	then
-		test 1
+		printf ",1" >> $OUTFILE
 	else
-		if [ ${ADDR[4]} = "${FILE}2.$EXT" ]
-		then
-			test 2
-		else
-			echo "$name;$num;Erreur de nom" >> log.txt
-		fi
+		printf ",0" >> $OUTFILE
 	fi
-#	read
+
+# check that index is correct
+	indexok=0
+	for i in "${INDEXES[@]}"
+	do
+		if [ $i = $index ]
+		then	
+			echo "index ok"
+			indexok=1
+		fi
+	done
+
+	if [ $indexok = 1 ]
+	then
+		printf ",1" >> $OUTFILE	
+		cp "src/$bn" exec/$FILE$index.$EXT
+		echo "DEBUT TEST"
+	else
+		printf ",0" >> $OUTFILE
+	fi
+
+	read
 done
 
