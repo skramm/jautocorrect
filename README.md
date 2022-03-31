@@ -9,13 +9,14 @@ Student Java code autocorrect
 
 - Input: zip file downloaded from a Moodle instance
 - Output: a csv file holding results of tests for each assignement/student
+- Usage: `./jautocorrect.sh my_moodle_zip_file.zip`
 
 ## Context
 Students are given an assignment:
 they need to write a small (single) Java program that generates some console output.
 When they are done, they upload the unique source file on a Moodle instance.
 
-They are multiple assignments (so every student does not have the same), identified by an index.
+There are multiple assignments (so every student does not have the same), identified by an index.
 Thus, the file they are required to upload must have a filename similar to:
 `MyProgram1.java` or `Assignment5.java` or `Exercice3.java`
 
@@ -23,7 +24,7 @@ Thus, the file they are required to upload must have a filename similar to:
 
 ## What this program does:
 
-- extract zip file into `src` folder
+- extract zip file into `src/` folder
 - for each file:
     - extract student name and number from file name
     - extract assignment index from file name
