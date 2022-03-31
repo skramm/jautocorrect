@@ -13,29 +13,30 @@ Student Java code autocorrect
 
 ## Context
 Students are given an assignment:
-they need to write a small (single) Java program that generates some console output.
+they need to write a small (single) Java program that generates some console output, given some command-line arguments.
 When they are done, they upload the unique source file on a Moodle instance.
 
 There are multiple assignments (so every student does not have the same), identified by an index.
 Thus, the file they are required to upload must have a filename similar to:
 `MyProgram1.java` or `Assignment5.java` or `Exercice3.java`
 
+This bash script will automate the testing of each program, to see if it fullfilths the requirements (given arguments produces given output).
 
 
 ## What this program does:
 
-- extract zip file into `src/` folder
+- extract input zip file into `src/` folder
 - for each file:
     - extract student name and number from file name
     - extract assignment index from file name
-    - checks that assignment index is correct (is an authorized one). If not, report it.
-    - checks that filename is correct (is the one given in assignment). If not, report it.
-    - checks that file extension is correct (is the one given in assignment). If not, report it. 
-    - checks that program compiles (`javac`), if not report is in output file and switch to next
-    - runs the provided test scripts, compare (`cmp`) the generated output with the provided output it should generate, on count the number of success. Report that count.
+    - checks that assignment index is correct (is an authorized one). If not, report it and switch to next one.
+    - checks that filename is correct (is the one given in assignment). If not, report it, and carry on.
+    - checks that file extension is correct (is the one given in assignment). If not, report it, and carry on. 
+    - checks that program compiles (`javac`), if not report is in output file and switch to next one.
+    - runs the provided test scripts, compare (`cmp`) the generated output with the provided output it should generate, and count the number of success. Report that count.
 
 ## Input file
-The input zip file is assumed to contains files matching the pattern:
+The input zip file is assumed to contains a set of files matching the pattern:
 ```
 PPPPP NNNNN_XXXXXXX_assignsubmission_file_FFFFFC.EEE
 ```
@@ -45,7 +46,7 @@ with:
 - NNNNN: lastname
 - XXXXXXX: student number
 - FFFFF: file name (given in assignment)
-- C: index of assignment
+- C: index of assignment (single digit)
 - EEE: file extension (java, here)
 
 This format is given by my local Moodle instance/version, it might not be the same for you.
