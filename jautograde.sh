@@ -1,3 +1,4 @@
+#!/bin/bash
 set +x
 
 # homepage: https://github.com/skramm/jautocorrect
@@ -23,8 +24,9 @@ COMPILER=javac
 # interpreter (only java at present)
 INTERPRETER=java
 
-#================================================================
 
+
+# ============================================
 function compare
 {
 	sum1=0
@@ -35,10 +37,13 @@ function compare
 		cmp -s expected/$fn2 exec/$fn2 
 		retval=$?
 		sum1=$(($sum1+$retval))
+		printf ",%d" $retval >>$OUTFILE
 	done
 	echo "compare score: $sum1"
+	printf ",T,%d" $sum1 >>$OUTFILE
 }
 
+# ============================================
 function run_tests
 {
 	echo "* run_tests, $name, index: $index pwd=$(pwd)"
@@ -52,26 +57,28 @@ function run_tests
 		
 		if [[ ${#line} != 0 ]] && [[ "${line:0:1}" != "#" ]] # only if line is not empty
 		then
-			echo "nb args=$nb itest=$itest"
+#			echo "nb args=$nb itest=$itest"
+			args=""
 			if [ $nb != 0 ]
-			then
-				args=""
+			then				
 				for (( n=1; n<=$nb; n++ ))
 				do
-#					echo "n=$n arg= ${ADDR[$n]}"
 					args="$args${ADDR[$n]} "
 				done
 				echo "args=$args"
-				cd exec/
-				$INTERPRETER $FILE$index.$EXT $args > stdout$index$itest.txt				
-				cd ..
 			fi
+			cd exec/
+			$INTERPRETER $FILE$index.$EXT $args > stdout$index$itest.txt 2>/dev/null			
+			rv=$?
+			cd ..
+			printf ",%d,%d" $itest $rv >>$OUTFILE
 		fi
 	itest=$((itest+1))
 	done < "$input"
-
+	printf ",X">>$OUTFILE
 }
 
+# ============================================
 function build_tests
 {
 	echo "* build_tests, $name, index: $index"
@@ -80,21 +87,23 @@ function build_tests
 # compile attempt
 	$COMPILER $FILE$index.$EXT 2>/dev/null
 	r2=$?
+	cd ..
 	rm *.class 2>/dev/null
 	if [ $r2 = 0 ] # if compile is successful
 	then
+		echo "-compile: success!"
 		printf ",1" >>$OUTFILE
-#		echo "-Running tests"
-		cd ..
-		run_tests
-		if [ $noCheck = 0 ]
+		if [ $indexok = 1 ]
 		then
-			compare $index
-			printf ",1,%d" $sum1 >>$OUTFILE
+			run_tests
+			if [ $noCheck = 0 ]
+			then
+				printf ",XXX">>$OUTFILE
+				compare $index
+			fi
 		fi
 	else
-		cd ..
-		echo "compile failure!"
+		echo "-compile: failure!"
 		printf ",0" >>$OUTFILE
 	fi
 }
@@ -146,7 +155,7 @@ do
 
 	if [ $noCheck = 0 ]
 	then
-		for (( n=1; n<=$NBTESTS; n++ ))
+		for (( n=0; n<$NBTESTS; n++ ))
 		do
 			expected=expected/stdout$f$n.txt
 			if [[ ! -e $expected ]]
@@ -160,12 +169,10 @@ done
 
 
 
-
-
 echo "# Results" >$OUTFILE
-printf "# student name,student number,filename ok,extension ok,compile success,test score\n">>$OUTFILE
+printf "# student name,student number,filename ok,extension ok,exercice index ok,compile success,test score\n">>$OUTFILE
 
-# LOOP START
+# 4 - LOOP START
 for a in src/*.$EXT
 do
 	bn=$(basename "$a")
@@ -186,6 +193,13 @@ do
 
 # check that filename is correct (if not good, go on anyway)
 	if [ "$an" = "$FILE" ]
+	then
+		printf ",1" >> $OUTFILE
+	else
+		printf ",0" >> $OUTFILE
+	fi
+
+	if [ "$na2" = "$EXT" ]
 	then
 		printf ",1" >> $OUTFILE
 	else
