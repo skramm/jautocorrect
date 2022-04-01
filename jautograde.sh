@@ -46,7 +46,7 @@ function compare
 # ============================================
 function run_tests
 {
-	echo "* run_tests, $name, index: $index pwd=$(pwd)"
+	echo "* run_tests, $name, index: $index"
 	input="input_args/args$index.txt"
 	itest=0
 	while IFS= read -r line
@@ -68,6 +68,8 @@ function run_tests
 				echo "args=$args"
 			fi
 			cd exec/
+			rm *.class 2>/dev/null
+			echo "$INTERPRETER $FILE$index.$EXT $args > stdout$index$itest.txt 2>/dev/null"			
 			$INTERPRETER $FILE$index.$EXT $args > stdout$index$itest.txt 2>/dev/null			
 			rv=$?
 			cd ..
@@ -75,7 +77,6 @@ function run_tests
 		fi
 	itest=$((itest+1))
 	done < "$input"
-	printf ",X">>$OUTFILE
 }
 
 # ============================================
@@ -89,6 +90,7 @@ function build_tests
 	r2=$?
 	cd ..
 	rm *.class 2>/dev/null
+	echo "r2=$r2"
 	if [ $r2 = 0 ] # if compile is successful
 	then
 		echo "-compile: success!"
@@ -168,9 +170,8 @@ do
 done
 
 
-
 echo "# Results" >$OUTFILE
-printf "# student name,student number,filename ok,extension ok,exercice index ok,compile success,test score\n">>$OUTFILE
+printf "# student name,student number,filename ok,extension ok,exercice index ok,compile success\n">>$OUTFILE
 
 # 4 - LOOP START
 for a in src/*.$EXT
@@ -216,14 +217,15 @@ do
 	if [ $indexok = 1 ]
 	then
 		printf ",1" >> $OUTFILE	
-		cp "src/$bn" exec/$FILE$index.$EXT
-		echo "DEBUT TEST"
-		build_tests
 	else
 		printf ",0" >> $OUTFILE
 		echo "-Failure: incorrect assignment index!"
 	fi
-	printf "\n" >> $OUTFILE	
+	cp "src/$bn" exec/$FILE$index.$EXT
+	echo "DEBUT TEST"
+	build_tests
+	printf "\n" >> $OUTFILE
+	
 	if [ $noCheck = 1 ]
 	then
 		echo "No Check mode active: hit enter to switch to next file"
