@@ -87,8 +87,11 @@ function build_tests
 #		echo "-Running tests"
 		cd ..
 		run_tests
-		compare $index
-		printf ",1,%d" $sum1 >>$OUTFILE
+		if [ $noCheck = 0 ]
+		then
+			compare $index
+			printf ",1,%d" $sum1 >>$OUTFILE
+		fi
 	else
 		cd ..
 		echo "compile failure!"
@@ -103,7 +106,7 @@ function build_tests
 # 1 - GENERAL CHECKING
 if [[ "$1" == "" ]]
 then
-	echo "usage: ./jautograde [input_file.zip]"
+	echo "usage: ./jautograde input_file.zip [flags]"
 	exit 1
 fi
 
@@ -113,26 +116,56 @@ then
 	exit 2
 fi
 
-for f in ${INDEXES[@]}
-do
-	argf=input_args/args$f.txt
-	if [[ ! -e $argf ]]
-	then	
-		echo "Missing file $argf, see manual"
-		exit 3
+noCheck=0
+if [[ "$2" != "" ]]
+then
+	if [[ "$2" = "-s" ]]
+	then
+		echo "-no checking option activated"
+		noCheck=1
 	fi
-done
+fi
 
-# cleanout and unzip input file
+
+# 2- cleanout previous run and unzip input file
 rm src/*
 unzip -q "$1" -d src/
 nbfiles=$(ls -1| wc -l)
 echo "processing $nbfiles input files"
 
+# 3 - CHECKING REQUIRED FILES
+
+for f in ${INDEXES[@]}
+do
+	argf=input_args/args$f.txt
+	if [[ ! -e $argf ]]
+	then	
+		echo "Missing arguments file '$argf', see manual"
+		exit 3
+	fi
+
+	if [ $noCheck = 0 ]
+	then
+		for (( n=1; n<=$NBTESTS; n++ ))
+		do
+			expected=expected/stdout$f$n.txt
+			if [[ ! -e $expected ]]
+				then	
+					echo "Missing expected results file: '$expected', see manual"
+					exit 4
+			fi		
+		done
+	fi
+done
+
+
+
+
 
 echo "# Results" >$OUTFILE
 printf "# student name,student number,filename ok,extension ok,compile success,test score\n">>$OUTFILE
 
+# LOOP START
 for a in src/*.$EXT
 do
 	bn=$(basename "$a")
@@ -163,11 +196,7 @@ do
 	indexok=0
 	for i in "${INDEXES[@]}"
 	do
-		if [ $i = $index ]
-		then	
-			echo "index ok"
-			indexok=1
-		fi
+		if [ $i = $index ];	then indexok=1; fi
 	done
 
 	if [ $indexok = 1 ]
@@ -181,6 +210,10 @@ do
 		echo "-Failure: incorrect assignment index!"
 	fi
 	printf "\n" >> $OUTFILE	
-	read
+	if [ $noCheck = 1 ]
+	then
+		echo "No Check mode active: hit enter to switch to next file"
+		read
+	fi
 done
 
