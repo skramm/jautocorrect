@@ -96,13 +96,47 @@ function build_tests
 	fi
 }
 
+# ============================================
+# START
+# ============================================
+
+# 1 - GENERAL CHECKING
+if [[ "$1" == "" ]]
+then
+	echo "usage: ./jautograde [input_file.zip]"
+	exit 1
+fi
+
+if [[ ! -e "$1" ]]
+then
+	echo "Input file not present!"
+	exit 2
+fi
+
+for f in ${INDEXES[@]}
+do
+	argf=input_args/args$f.txt
+	if [[ ! -e $argf ]]
+	then	
+		echo "Missing file $argf, see manual"
+		exit 3
+	fi
+done
+
+# cleanout and unzip input file
+rm src/*
+unzip -q "$1" -d src/
+nbfiles=$(ls -1| wc -l)
+echo "processing $nbfiles input files"
+
+
 echo "# Results" >$OUTFILE
 printf "# student name,student number,filename ok,extension ok,compile success,test score\n">>$OUTFILE
 
 for a in src/*.$EXT
 do
 	bn=$(basename "$a")
-
+	echo "processing $bn"
 	IFS='_' read -ra ADDR <<< "$bn"
 	name=${ADDR[0]}
 	num=${ADDR[1]}
