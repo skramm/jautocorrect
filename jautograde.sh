@@ -3,7 +3,7 @@ set +x
 
 # homepage: https://github.com/skramm/jautocorrect
 
-# Required filename (without added assignment index)
+# Required filename for the assignments (without added assignment index)
 FILE=Test
 
 # Required filename extension
@@ -15,7 +15,7 @@ INDEXES=(1 2)
 # output log file
 OUTFILE=log.csv
 
-# number of tests for each assignement
+# number of tests for each assignement (must be the same for all the assignments)
 NBTESTS=4
 
 # compiler (only javac at present)
@@ -69,7 +69,7 @@ function run_tests
 			fi
 			cd exec/
 			rm *.class 2>/dev/null
-			echo "$INTERPRETER $FILE$index.$EXT $args > stdout$index$itest.txt 2>/dev/null"			
+#			echo "$INTERPRETER $FILE$index.$EXT $args > stdout$index$itest.txt 2>/dev/null"			
 			$INTERPRETER $FILE$index.$EXT $args > stdout$index$itest.txt 2>/dev/null			
 			rv=$?
 			cd ..
@@ -86,11 +86,10 @@ function build_tests
 	cd exec/;
 
 # compile attempt
-	$COMPILER $FILE$index.$EXT 2>/dev/null
+	$COMPILER *.$EXT 2>/dev/null
 	r2=$?
 	cd ..
 	rm *.class 2>/dev/null
-	echo "r2=$r2"
 	if [ $r2 = 0 ] # if compile is successful
 	then
 		echo "-compile: success!"
@@ -103,6 +102,8 @@ function build_tests
 				printf ",XXX">>$OUTFILE
 				compare $index
 			fi
+		else
+			echo "Stop, unable to determine tests, invalid index"
 		fi
 	else
 		echo "-compile: failure!"
@@ -139,7 +140,8 @@ fi
 
 
 # 2- cleanout previous run and unzip input file
-rm src/*
+rm src/* 2>/dev/null
+rm exec/* 2>/dev/null
 unzip -q "$1" -d src/
 nbfiles=$(ls -1| wc -l)
 echo "processing $nbfiles input files"
@@ -151,10 +153,17 @@ do
 	argf=input_args/args$f.txt
 	if [[ ! -e $argf ]]
 	then	
-		echo "Missing arguments file '$argf', see manual"
+		echo "Error: missing arguments file '$argf', see manual"
 		exit 3
 	fi
 
+	nbl=$(wc -l $argf)
+	if [ $nbl != $NBTESTS ]
+	then
+		echo "Error: arguments file $argf does not have the require nb of lines ($NBTESTS)"
+		exit 4
+	fi
+	
 	if [ $noCheck = 0 ]
 	then
 		for (( n=0; n<$NBTESTS; n++ ))
@@ -162,7 +171,7 @@ do
 			expected=expected/stdout$f$n.txt
 			if [[ ! -e $expected ]]
 				then	
-					echo "Missing expected results file: '$expected', see manual"
+					echo "Error: missing expected results file: '$expected', see manual"
 					exit 4
 			fi		
 		done
@@ -190,9 +199,9 @@ do
 	sna=$((${#na1}-1))
 	an=${na1:0:sna}
 	index=${na1:sna:1}
-#	echo "bn=$bn na=$na na1=$na1 na2=$na2 sna=$sna an=$an, index=$index"
+	echo "bn=$bn na=$na na1=$na1 na2=$na2 sna=$sna an=$an, index=$index"
 
-# check that filename is correct (if not good, go on anyway)
+# check that filename and extendion are correct (if not good, go on anyway)
 	if [ "$an" = "$FILE" ]
 	then
 		printf ",1" >> $OUTFILE
@@ -221,7 +230,8 @@ do
 		printf ",0" >> $OUTFILE
 		echo "-Failure: incorrect assignment index!"
 	fi
-	cp "src/$bn" exec/$FILE$index.$EXT
+	rm exec/* 2>/dev/null
+	cp "src/$bn" exec/$na1.$EXT
 	echo "DEBUT TEST"
 	build_tests
 	printf "\n" >> $OUTFILE
