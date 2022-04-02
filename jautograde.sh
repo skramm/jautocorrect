@@ -40,16 +40,29 @@ function compare
 		cn1=${fn2%.*}
 		cn2=${fn2#*.}
 		isGood=0
-		echo " -comparing with $fn2 "
+		echo " -checking result using $fn2"
+		if [[ $verbose = 1 ]];
+		then
+			echo " -generated output:"
+			cat exec/$fn2
+		fi
 		for j in $(ls expected/$cn1*.txt)
 		do
-#			echo "match: $j"
+			if [[ $verbose = 1 ]];
+			then
+				echo " -comparing with required output:"
+				cat $j
+			fi
 			cmp -s $j exec/$fn2 	
 			retval=$?
-			if [[ $retval = 0 ]]; then isGood=1; break; fi
+			if [[ $retval = 0 ]]; then isGood=1; echo " -result: success!"; break; fi
 		done
-#		cmp -s expected/$fn2 exec/$fn2 
-#		retval=$?
+		
+		if [[ $verbose = 1 ]];
+		then
+			if [[ $isGood = 0 ]]; then echo " -result: failure!"; fi
+		fi				
+		
 		sum1=$(($sum1+$retval))
 		printf ",%d" $isGood >>$OUTFILE
 	done
@@ -150,11 +163,13 @@ fi
 # FLAGS
 noCheck=0
 stopOnEach=0
+verbose=0
 for ((i=1;i<$#;i++))
 do
 	echo "arg $i: ${@:$i:1}"
 	if [[ ${@:$i:1} = "-s" ]]; then stopOnEach=1; fi
 	if [[ ${@:$i:1} = "-n" ]]; then noCheck=1; fi
+	if [[ ${@:$i:1} = "-v" ]]; then verbose=1; fi
 done
 
 
