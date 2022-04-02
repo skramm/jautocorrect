@@ -73,10 +73,11 @@ function run_tests
 			$INTERPRETER $FILE$index.$EXT $args > stdout$index$itest.txt 2>/dev/null			
 			rv=$?
 			cd ..
-			printf ",%d,%d" $itest $rv >>$OUTFILE
+			printf ",%d" $rv >>$OUTFILE
 		fi
 	itest=$((itest+1))
 	done < "$input"
+#	printf ",X" >>$OUTFILE
 }
 
 # ============================================
@@ -93,13 +94,13 @@ function build_tests
 	if [ $r2 = 0 ] # if compile is successful
 	then
 		echo "-compile: success!"
-		printf ",1" >>$OUTFILE
+		printf ",1,X" >>$OUTFILE
 		if [ $indexok = 1 ]
 		then
 			run_tests
 			if [ $noCheck = 0 ]
 			then
-				printf ",XXX">>$OUTFILE
+				printf ",">>$OUTFILE
 				compare $index
 			fi
 		else
@@ -107,7 +108,7 @@ function build_tests
 		fi
 	else
 		echo "-compile: failure!"
-		printf ",0" >>$OUTFILE
+		printf ",0," >>$OUTFILE
 	fi
 }
 
@@ -157,13 +158,6 @@ do
 		exit 3
 	fi
 
-	nbl=$(wc -l $argf)
-	if [ $nbl != $NBTESTS ]
-	then
-		echo "Error: arguments file $argf does not have the require nb of lines ($NBTESTS)"
-		exit 4
-	fi
-	
 	if [ $noCheck = 0 ]
 	then
 		for (( n=0; n<$NBTESTS; n++ ))
@@ -172,7 +166,7 @@ do
 			if [[ ! -e $expected ]]
 				then	
 					echo "Error: missing expected results file: '$expected', see manual"
-					exit 4
+					exit 5
 			fi		
 		done
 	fi
@@ -180,7 +174,19 @@ done
 
 
 echo "# Results" >$OUTFILE
-printf "# student name,student number,filename ok,extension ok,exercice index ok,compile success\n">>$OUTFILE
+printf "# student name,student number,filename ok,extension ok,exercice index ok,compile success, run_status:">>$OUTFILE
+for ((n=0;n<$NBTESTS; n++))
+do
+	printf ",$n">>$OUTFILE
+done
+printf ",compare_status:">>$OUTFILE
+
+for ((n=0;n<$NBTESTS; n++))
+do
+	printf ",$n">>$OUTFILE
+done
+
+printf "\n">>$OUTFILE
 
 # 4 - LOOP START
 for a in src/*.$EXT

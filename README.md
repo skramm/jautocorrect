@@ -56,13 +56,13 @@ This format is given by my local Moodle instance/version, it might not be the sa
 
 You need to:
 
-  1. edit the script and change variables `FILE` and `INDEXES` as required
-  2. provide the test scripts
-  3. provide the expected output for each line of the test scripts
+  1. edit the script and change variables `FILE`, `INDEXES`, `NBTESTS` as required;
+  2. provide the test data;
+  3. provide the expected output for each line of the test scripts.
 
 Each program is tested with different arguments, these need to be given for each assignment index in a file named `args1.txt` (or `args2.txt` for index=2, `args3.txt` for index=3,...), located in folder `input_args/`.
 These files will hold the command line arguments to be given, with as first element the number of arguments.
-Comments may be given by putting `#` as first character, empty lines are allowed.
+Comments may be given by putting # as first character, empty lines are allowed.
 
 For example, this file content:
 ```
