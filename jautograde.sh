@@ -119,31 +119,34 @@ function build_tests
 # 1 - GENERAL CHECKING
 if [[ "$1" == "" ]]
 then
-	echo "usage: ./jautograde input_file.zip [flags]"
+	echo "usage: ./jautograde [flags] input_file.zip"
 	exit 1
 fi
 
-if [[ ! -e "$1" ]]
+# last arg
+inputfn=${!#}
+
+if [[ ! -e "$inputfn" ]]
 then
-	echo "Input file not present!"
+	echo "Error: input file '$inputfn' not present!"
 	exit 2
 fi
 
+# FLAGS
 noCheck=0
-if [[ "$2" != "" ]]
-then
-	if [[ "$2" = "-s" ]]
-	then
-		echo "-no checking option activated"
-		noCheck=1
-	fi
-fi
+stopOnEach=0
+for ((i=1;i<$#;i++))
+do
+	echo "arg $i: ${@:$i:1}"
+	if [[ ${@:$i:1} = "-s" ]]; then stopOnEach=1; fi
+	if [[ ${@:$i:1} = "-n" ]]; then noCheck=1; fi
+done
 
 
 # 2- cleanout previous run and unzip input file
 rm src/* 2>/dev/null
 rm exec/* 2>/dev/null
-unzip -q "$1" -d src/
+unzip -q "$inputfn" -d src/
 nbfiles=$(ls -1| wc -l)
 echo "processing $nbfiles input files"
 
@@ -242,9 +245,9 @@ do
 	build_tests
 	printf "\n" >> $OUTFILE
 	
-	if [ $noCheck = 1 ]
+	if [ $stopOnEach = 1 ]
 	then
-		echo "No Check mode active: hit enter to switch to next file"
+		echo "Hit enter to switch to next file"
 		read
 	fi
 done

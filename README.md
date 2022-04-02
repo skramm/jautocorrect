@@ -5,23 +5,27 @@ Student Java code automatic grading
 (This is work in progress !)
 
 
+
 ## Goal: automate testing of student Java programs
 
 - Input: zip file downloaded from a Moodle instance
 - Output: a csv file holding results of tests for each assignement/student
-- Usage: `./jautocorrect.sh my_moodle_zip_file.zip`
+- Usage: `./jautocorrect.sh [flags] input_file.zip`
 
 ## Context
 Students are given an assignment:
-they need to write a small (single) Java program that generates some console output, given some command-line arguments.
+they need to write a small (single file) Java program that generates some console output, given some command-line arguments.
 When they are done, they upload the unique source file on a Moodle instance.
 
 There are multiple assignments (so every student does not have the same), identified by an index.
 Thus, the file they are required to upload must have a filename similar to:
 `MyProgram1.java` or `Assignment5.java` or `Exercice3.java`
 
-This bash script will automate the testing of each program, to see if it fullfilths the requirements (given arguments produces given output).
+This bash script will automate the testing of each program, to see if it fullfilths the requirements that the given arguments produces a given output.
 
+**Warning**
+Parsing the produced output is a byte-to-byte comparison (`cmp` shell command).
+So if you expect an output to be, say, `Abc!` and the student programs outputs `Abc !`, this will count as a failure.
 
 ## What this program does:
 
@@ -50,6 +54,20 @@ with:
 - EEE: file extension (java, here)
 
 This format is given by my local Moodle instance/version, it might not be the same for you.
+
+## Flags
+
+  - `-n`: no checking of produced output files
+  - `-s`: stops after processing each program
+
+The parser is pretty basic, so the flags must be given separately (but in any order), thus this will fail:
+```
+./jautograde -ns input.zip
+```
+but this is ok:
+```
+./jautograde -n -s input.zip
+```
 
 
 ## What do I need to do as teacher ?
