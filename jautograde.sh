@@ -43,7 +43,7 @@ function compare
 		echo " -comparing with $fn2 "
 		for j in $(ls expected/$cn1*.txt)
 		do
-			echo "match: $j"
+#			echo "match: $j"
 			cmp -s $j exec/$fn2 	
 			retval=$?
 			if [[ $retval = 0 ]]; then isGood=1; break; fi
@@ -108,6 +108,7 @@ function build_tests
 	if [ $r2 = 0 ] # if compile is successful
 	then
 		echo "-compile: success!"
+		nbcompile=$(($nbcompile+1))
 		printf ",1,X" >>$OUTFILE
 		if [ $indexok = 1 ]
 		then
@@ -162,7 +163,8 @@ rm src/* 2>/dev/null
 rm exec/* 2>/dev/null
 unzip -q "$inputfn" -d src/
 nbfiles=$(ls -1| wc -l)
-echo "processing $nbfiles input files"
+echo "-processing $nbfiles input files"
+nbcompile=0
 
 # 3 - CHECKING REQUIRED FILES
 
@@ -225,7 +227,7 @@ do
 	index=${na1:sna:1}
 	echo "bn=$bn na=$na na1=$na1 na2=$na2 sna=$sna an=$an, index=$index"
 
-# check that filename and extendion are correct (if not good, go on anyway)
+# check that filename and extension are correct (if not good, go on anyway)
 	if [ "$an" = "$FILE" ]
 	then
 		printf ",1" >> $OUTFILE
@@ -240,7 +242,7 @@ do
 		printf ",0" >> $OUTFILE
 	fi
 
-# check that index is correct (if not good, stop, because we can't do more)
+# check that index is correct (if not good, try to compile anyway)
 	indexok=0
 	for i in "${INDEXES[@]}"
 	do
@@ -266,4 +268,6 @@ do
 		read
 	fi
 done
+
+echo "-end, nb of successful builds: $nbcompile/$nbfiles"
 

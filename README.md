@@ -36,7 +36,7 @@ This bash script will automate the testing of each program, to see if it fullfil
     - runs the provided test scripts, compare (`cmp`) the generated output with the provided output it should generate, and count the number of success. Report that count.
 
 ## Input file
-The input zip file is assumed to contains a set of files matching the pattern:
+The input zip file is assumed to contain a set of files matching the pattern:
 ```
 PPPPP NNNNN_XXXXXXX_assignsubmission_file_FFFFFC.EEE
 ```
@@ -50,6 +50,7 @@ with:
 - EEE: file extension (java, here)
 
 This format is given by my local Moodle instance/version, it might not be the same for you.
+This could be adjusted.
 
 ## Flags
 
