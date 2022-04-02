@@ -27,6 +27,7 @@ INTERPRETER=java
 
 
 # ============================================
+# argument: index of the assignment
 function compare
 {
 	sum1=0
