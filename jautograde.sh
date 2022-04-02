@@ -28,17 +28,30 @@ INTERPRETER=java
 
 # ============================================
 # argument: index of the assignment
+# loop on all the generated output files, and
+# compare then to the expected output
 function compare
 {
 	sum1=0
-	for i in $(ls expected/stdout$1*.txt)
+	for i in $(ls exec/stdout$1*.txt)
 	do
 		fn2=$(basename "$i")
-		echo " -comparing with $fn2"
-		cmp -s expected/$fn2 exec/$fn2 
-		retval=$?
+		# separate filename and extension
+		cn1=${fn2%.*}
+		cn2=${fn2#*.}
+		isGood=0
+		echo " -comparing with $fn2 "
+		for j in $(ls expected/$cn1*.txt)
+		do
+			echo "match: $j"
+			cmp -s $j exec/$fn2 	
+			retval=$?
+			if [[ $retval = 0 ]]; then isGood=1; break; fi
+		done
+#		cmp -s expected/$fn2 exec/$fn2 
+#		retval=$?
 		sum1=$(($sum1+$retval))
-		printf ",%d" $retval >>$OUTFILE
+		printf ",%d" $isGood >>$OUTFILE
 	done
 	echo "compare score: $sum1"
 	printf ",T,%d" $sum1 >>$OUTFILE
@@ -167,9 +180,10 @@ do
 		for (( n=0; n<$NBTESTS; n++ ))
 		do
 			expected=expected/stdout$f$n.txt
-			if [[ ! -e $expected ]]
+			nbef=$(ls -1 expected/stdout$f$n*.txt | wc -l)
+			if [[ $nbef = 0 ]]
 				then	
-					echo "Error: missing expected results file: '$expected', see manual"
+					echo "Error: missing expected results file matching expected/stdout$f$n, see manual"
 					exit 5
 			fi		
 		done
