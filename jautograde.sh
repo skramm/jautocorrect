@@ -241,6 +241,7 @@ do
 	num=${ADDR[1]}
 	na=${ADDR[4]}
 	echo "*** Processing student '$name', filename=$na"
+	printf "$name,$num" >> $OUTFILE
 # separate filename and extension
 	na1=${na%.*}
 	na2=${na#*.}
@@ -248,7 +249,6 @@ do
 	sna=$((${#na1}-1))
 	an=${na1:0:sna}
 	index=${na1:sna:1}
-	printf "$name,$num,$index" >> $OUTFILE
 	
 #	echo "bn=$bn na=$na na1=$na1 na2=$na2 sna=$sna an=$an, index=$index"
 
@@ -276,9 +276,9 @@ do
 
 	if [ $indexok = 1 ]
 	then
-		printf ",1" >> $OUTFILE	
+		printf ",$index,1" >> $OUTFILE	
 	else
-		printf ",0" >> $OUTFILE
+		printf ",?,0" >> $OUTFILE
 		echo "-Failure: incorrect assignment index!"
 	fi
 	rm exec/* 2>/dev/null
