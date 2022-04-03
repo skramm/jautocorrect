@@ -23,6 +23,17 @@ Thus, the file they are required to upload must have a filename similar to:
 
 This bash script will automate the testing of each program, to see if it fullfilths the requirements that the given arguments produces a given output.
 
+This script will generate a CSV file holding all the results
+ - does the program have the required name?
+ - does the program filename holds the assignment index at the correct position (i.e. at the end...)?
+ - does the program filename holds the correct extension?
+ - does the program compile?
+ - does the program run and returns 0 as return value?
+ - does the program generate the correct output for the given arguments?
+
+All of these informations is printed out in the output file that you can further upload into a spreadsheet application to process a grade according to the points above that you consider relevant.
+
+
 ## What this program does:
 
 - extract input zip file into `src/` folder
@@ -33,7 +44,8 @@ This bash script will automate the testing of each program, to see if it fullfil
     - checks that filename is correct (is the one given in assignment). If not, report it, and carry on.
     - checks that file extension is correct (is the one given in assignment). If not, report it, and carry on. 
     - checks that program compiles (`javac`), if not report it in output file and switch to next one.
-    - runs the provided test scripts, compare (`cmp`) the generated output with the provided output it should generate, and count the number of success. Report that count.
+    - runs the provided test scripts and checks that return value is 0
+    - compare (`cmp`) the generated output with the provided output it should generate, and count the number of success. Report that count.
 
 ## Input file
 The input zip file is assumed to contain a set of files matching the pattern:
@@ -56,6 +68,8 @@ This could be adjusted.
 
   - `-n`: no checking of produced output files
   - `-s`: stops after processing each program
+  - `-v`: verbose mode: prints for each test both the expected output(s) and the produced output.
+
 
 The parser is pretty basic, so the flags must be given separately (but in any order), thus this will fail:
 ```
