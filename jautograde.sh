@@ -44,14 +44,14 @@ function compare
 		echo " -checking result using $fn2"
 		if [[ $verbose = 1 ]];
 		then
-			echo " -generated output:"
+			echo "  -generated output:"
 			cat exec/$fn2
 		fi
 		for j in $(ls expected/$cn1*.txt)
 		do
 			if [[ $verbose = 1 ]];
 			then
-				echo " -comparing with required output:"
+				echo "  -comparing with required output:"
 				cat $j
 			fi
 			cmp -s $j exec/$fn2 	
@@ -59,16 +59,13 @@ function compare
 			if [[ $retval = 0 ]]; then isGood=1; echo " -result: success"; break; fi
 		done
 		
-#		if [[ $verbose = 1 ]];
-#		then
-			if [[ $isGood = 0 ]]; then echo " -result: failure"; fi
-#		fi				
+		if [[ $isGood = 0 ]]; then echo " -result: failure"; fi
 		
-		sum1=$(($sum1+$retval))
+		sum1=$(($sum1+$isGood))
 		printf ",%d" $isGood >>$OUTFILE
 	done
-	echo "compare score: $sum1"
-	printf ",T,%d" $sum1 >>$OUTFILE
+#	echo "compare score: $sum1"
+	printf ",%d" $sum1 >>$OUTFILE
 }
 
 # ============================================
@@ -116,13 +113,12 @@ function run_tests
 		fi
 	itest=$((itest+1))
 	done < "$input"
-#	printf ",X" >>$OUTFILE
 }
 
 # ============================================
 function build_tests
 {
-	echo "* step 1: build_tests, $name, index: $index"
+	echo "* step 1: build_tests, index: $index"
 	cd exec/;
 
 # compile attempt
@@ -134,7 +130,7 @@ function build_tests
 	then
 		echo " -compile: success"
 		nbcompile=$(($nbcompile+1))
-		printf ",1,X" >>$OUTFILE
+		printf ",1," >>$OUTFILE
 		if [ $indexok = 1 ]
 		then
 			run_tests
@@ -221,7 +217,7 @@ done
 
 
 echo "# Results" >$OUTFILE
-printf "# student name,student number,filename ok,extension ok,exercice index ok,compile success, run_status:">>$OUTFILE
+printf "# student name,student number,filename ok,extension ok,exercice index ok,compile success,run_status:">>$OUTFILE
 for ((n=0;n<$NBTESTS; n++))
 do
 	printf ",$n">>$OUTFILE
@@ -233,7 +229,8 @@ do
 	printf ",$n">>$OUTFILE
 done
 
-printf "\n">>$OUTFILE
+printf ",compare_score\n">>$OUTFILE
+
 
 # 4 - LOOP START
 for a in src/*.$EXT
@@ -292,6 +289,8 @@ do
 	then
 		echo "Hit enter to switch to next file"
 		read
+	else
+		echo ""
 	fi
 done
 
