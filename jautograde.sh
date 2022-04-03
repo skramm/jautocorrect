@@ -172,18 +172,20 @@ fi
 noCheck=0
 stopOnEach=0
 verbose=0
+storeFiles=0
 for ((i=1;i<$#;i++))
 do
 	echo "arg $i: ${@:$i:1}"
 	if [[ ${@:$i:1} = "-s" ]]; then stopOnEach=1; fi
 	if [[ ${@:$i:1} = "-n" ]]; then noCheck=1; fi
 	if [[ ${@:$i:1} = "-v" ]]; then verbose=1; fi
+	if [[ ${@:$i:1} = "-t" ]]; then storeFiles=1; fi
 done
 
 
 # 2- cleanout previous run and unzip input file
 rm src/* 2>/dev/null
-rm exec/* 2>/dev/null
+rm -r exec/* 2>/dev/null
 unzip -q "$inputfn" -d src/
 nbfiles=$(ls -1| wc -l)
 echo "-processing $nbfiles input files"
@@ -283,6 +285,11 @@ do
 	fi
 	rm exec/* 2>/dev/null
 	cp "src/$bn" exec/$na1.$EXT
+	if [[ $storeFiles == 1 ]]
+	then
+		mkdir -p exec/stored/$num
+		cp "src/$bn" exec/stored/$num/$na1.$EXT
+	fi
 	build_tests
 	printf "\n" >> $OUTFILE
 	

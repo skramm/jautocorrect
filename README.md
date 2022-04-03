@@ -69,6 +69,7 @@ This could be adjusted.
   - `-n`: no checking of produced output files
   - `-s`: stops after processing each program
   - `-v`: verbose mode: prints for each test both the expected output(s) and the produced output.
+  - `-t`: store the student programs renamed with the extracted name into `exec/stored/<id-number>` (will be cleared by new run)
 
 
 The parser is pretty basic, so the flags must be given separately (but in any order), thus this will fail:
