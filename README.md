@@ -25,10 +25,10 @@ This bash script will automate the testing of each program, to see if it fullfil
 
 This script will generate a CSV file holding all the results
  - does the program have the required name?
- - does the program filename holds the assignment index at the correct position (i.e. at the end...)?
- - does the program filename holds the correct extension?
+ - does the program filename hold the assignment index at the correct position (i.e. at the end...)?
+ - does the program filename hold the correct extension?
  - does the program compile?
- - does the program run and returns 0 as return value?
+ - does the program run and return 0 as return value?
  - does the program generate the correct output for the given arguments?
 
 All of these informations is printed out in the output file that you can further upload into a spreadsheet application to process a grade according to the points above that you consider relevant.
@@ -86,7 +86,7 @@ but this is ok:
 You need to:
 
   1. edit the script and change variables `FILE`, `INDEXES`, `NBTESTS` as required;
-  2. provide the test data;
+  2. provide the test arguments (one file per assignment index);
   3. provide the expected output for each line of the test scripts.
 
 ### Providing test arguments
@@ -103,7 +103,7 @@ For example, this file content:
 will generated two runs of the program, one with no arguments, the other with 2 arguments, i.e. if the program name is `Abc` and the assignement index is 5, then this is equivalent to running this in the `exec/` folder:
 ```
 $ java Abc5.java > stdout50.txt
-$ java Abc5.java a 42 > stdout51.txt
+$ java Abc5.java A 42 > stdout51.txt
 ```
 Once this is done, the script will then compare the generated output files with the ones having the same name, in folder `expected/`.
 
@@ -114,15 +114,16 @@ in the `expected` folder, with X the assignment index and Y the test case (corre
 
 To avoid having failures for some minor differences between the expected output and the student program output, you can provide several files holding the different outputs that are accepted.
 
-For example, if you expect an output to be `5` (`int` value) but you consider that the output `5.0` (`float` value) is ok too, then you need to provide two files, named 
-`stdoutXYa.txt` and `stdoutXYb.txt`.
+For example, if you expect an output to be `5` (`int` value) but you consider that the output `5.0` (`float` value) is ok too, then you need to provide two files matching the pattern
+`stdoutXY*.txt`.
+For example `stdoutXYa.txt` and `stdoutXYb.txt`.
 
 
 ## Tips
 
 Point 3 above can be quite tedious.
-So what you can do is try a "dry run" without any files in the `expected/` folder and use the output by a given student (that you will find in the 
-`exec/` folder).
+So what you can do is try passing the `-s` flags, and have a look at what the student program generates (in the `exec/` folder).
+If it fits, then just copy the files as is to the `expected/` folder!
 
 ## I don't get it. You have a demo to show me?
 
@@ -134,14 +135,23 @@ So what you can do is try a "dry run" without any files in the `expected/` folde
 - https://cseducators.stackexchange.com/questions/1205/how-can-i-automate-the-grading-of-programming-assignments
 - https://web-cat.org/
 
-## Why ?
+## FAQ
+
+### Why ?
 
 Well... I sorted of needed that kinda stuff to avoid checking for really basic stuff when grading the student works.
 
-## Why bash ???
+### Why bash ???
 
 At one point I felt that my bash skills were too rusty. But, agree, pretty slow...
 
+### Could this be usable with other languages?
 
-  
+Maybe. C or C++, why not, but you might run into issues about passing the compile options (`CFLAGS`, `LDFLAGS`).
+
+
+### Any chance this will work on Windows?
+
+Can't say. There is some thing called WSL on Windows, maybe you can give it a try.
+Please let me know!
 
