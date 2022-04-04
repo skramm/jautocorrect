@@ -2,28 +2,7 @@
 set +x
 
 # homepage: https://github.com/skramm/jautocorrect
-
-# Required filename for the assignments (without added assignment index)
-FILE=Test
-
-# Required filename extension
-EXT=java
-
-# autorized assignment indexes: array of arbitrary integer digits
-INDEXES=(1 2)
-
-# output log file
-OUTFILE=log.csv
-
-# number of tests for each assignement (must be the same for all the assignments)
-NBTESTS=4
-
-# compiler (only javac at present)
-COMPILER=javac
-
-# interpreter (only java at present)
-INTERPRETER=java
-
+# start of program: line 31
 
 
 # ============================================
@@ -159,7 +138,7 @@ then
 	exit 1
 fi
 
-# last arg
+# input filename is last arg
 inputfn=${!#}
 
 if [[ ! -e "$inputfn" ]]
@@ -173,17 +152,69 @@ noCheck=0
 stopOnEach=0
 verbose=0
 storeFiles=0
+showParams=0
 for ((i=1;i<$#;i++))
 do
-	echo "arg $i: ${@:$i:1}"
 	if [[ ${@:$i:1} = "-s" ]]; then stopOnEach=1; fi
 	if [[ ${@:$i:1} = "-n" ]]; then noCheck=1; fi
 	if [[ ${@:$i:1} = "-v" ]]; then verbose=1; fi
 	if [[ ${@:$i:1} = "-t" ]]; then storeFiles=1; fi
+	if [[ ${@:$i:1} = "-p" ]]; then showParams=1; fi
 done
 
+# 2 - READ PARAMETERS FILE
 
-# 2- cleanout previous run and unzip input file
+# 2.1 - default values
+
+# Required filename for the assignments (without added assignment index)
+FILE=Test
+
+# Required filename extension
+EXT=java
+
+# autorized assignment indexes: array of arbitrary integer digits
+INDEXES=(3 4 5)
+
+# output log file
+OUTFILE=log.csv
+
+# number of tests for each assignement (must be the same for all the assignments)
+NBTESTS=4
+
+# compiler
+COMPILER=javac
+
+# interpreter
+INTERPRETER=java
+
+# 2.2 - try to read them in file
+
+PARAMS_FILE=params.txt
+while IFS= read -r line
+do
+	IFS='=' read -ra PAR <<< "$line"
+	key=${PAR[0]}
+	value=${PAR[1]}
+	if [ "$key" = "FILE" ];    then FILE=$value; fi
+	if [ "$key" = "EXT" ];     then EXT=$value; fi
+	if [ "$key" = "NBTESTS" ]; then NBTESTS=$value; fi
+	if [ "$key" = "INDEXES" ]; then INDEXES=($value); fi
+done < "$PARAMS_FILE"
+
+# 2.3 - print them if asked for
+
+if [ $showParams = 1 ]
+then
+	echo " -Parameters:"
+	echo "  - FILE: $FILE"
+	echo "  - EXT: $EXT"
+	echo "  - NBTESTS: $NBTESTS"
+	echo "  - INDEXES: $INDEXES"
+	exit 1
+fi
+
+# 3 - CLEANOUT PREVIOUS RUN AND UNZIP INPUT FILE
+
 rm src/* 2>/dev/null
 rm -r exec/* 2>/dev/null
 unzip -q "$inputfn" -d src/
@@ -191,10 +222,11 @@ nbfiles=$(ls -1| wc -l)
 echo "-processing $nbfiles input files"
 nbcompile=0
 
-# 3 - CHECKING REQUIRED FILES
+# 4 - CHECKING REQUIRED FILES
 
 for f in ${INDEXES[@]}
 do
+	echo "f=$f"
 	argf=input_args/args$f.txt
 	if [[ ! -e $argf ]]
 	then	
@@ -234,7 +266,7 @@ done
 printf ",compare_score\n">>$OUTFILE
 
 
-# 4 - LOOP START
+# 5 - LOOP START
 for a in src/*.$EXT
 do
 	bn=$(basename "$a")
@@ -281,7 +313,7 @@ do
 		printf ",$index,1" >> $OUTFILE	
 	else
 		printf ",?,0" >> $OUTFILE
-		echo "-Failure: incorrect assignment index!"
+		echo "-Failure: incorrect assignment index"
 	fi
 	rm exec/* 2>/dev/null
 	cp "src/$bn" exec/$na1.$EXT
