@@ -70,6 +70,7 @@ This could be adjusted.
   - `-s`: stops after processing each program
   - `-v`: verbose mode: prints for each test both the expected output(s) and the produced output.
   - `-t`: store the student programs renamed with the extracted name into `exec/stored/<id-number>` (will be cleared by new run)
+  - `-l`: change the way names with 3 words are handled (see below).
 
 
 The parser is pretty basic, so the flags must be given separately (but in any order), thus this will fail:
@@ -81,6 +82,17 @@ but this is ok:
 ./jautograde -n -s input.zip
 ```
 
+### Names with 3 words
+
+For some reason; it seems that Moodle stores full names only in a single field, as "firstname lastname".
+This can be annoying when copying/pasting results to another spreadsheet document, because we usually use last names, and having the first name in first position makes it difficult to sort.
+
+For names with only 2 words ("John Doe"), it's easy to separate them into firstname and lastname into the output csv file.
+But for names with 3 words ("John Something Doe"), we run into an issue: is the last name "Doe" or "Something Doe".
+The default behavior is to consider that the lastname is "Something Doe", but you can change that by passing the `-l` switch.
+In that case, the lastname will be "Doe" and the firstname "John Something".
+
+Please note that this script actually does not support names with more than 3 words.
 
 ## What do I need to do as teacher ?
 
