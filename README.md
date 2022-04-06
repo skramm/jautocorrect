@@ -182,3 +182,9 @@ Maybe. C or C++, why not, but you might run into issues about passing the compil
 Can't say. There is some thing called WSL on Windows, maybe you can give it a try.
 Please let me know.
 
+### Could this be used independently from Moodle (that is, by directly providing a zip file holding all the programs)?
+
+Yep, that could work but would require some tweaking of the file name extraction.
+Please post an issue describing your usecase, I'll see if I can fix that.
+
+That you pr
