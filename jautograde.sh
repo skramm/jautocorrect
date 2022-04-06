@@ -2,7 +2,7 @@
 set +x
 
 # homepage: https://github.com/skramm/jautocorrect
-# start of program: line 31
+# start of program: line 131
 
 
 # ============================================
@@ -153,6 +153,7 @@ stopOnEach=0
 verbose=0
 storeFiles=0
 showParams=0
+lnameIsLast=0
 for ((i=1;i<$#;i++))
 do
 	if [[ ${@:$i:1} = "-s" ]]; then stopOnEach=1; fi
@@ -160,6 +161,7 @@ do
 	if [[ ${@:$i:1} = "-v" ]]; then verbose=1; fi
 	if [[ ${@:$i:1} = "-t" ]]; then storeFiles=1; fi
 	if [[ ${@:$i:1} = "-p" ]]; then showParams=1; fi
+	if [[ ${@:$i:1} = "-l" ]]; then lnameIsLast=1; fi
 done
 
 # 2 - READ PARAMETERS FILE
@@ -227,7 +229,6 @@ nbcompile=0
 
 for f in ${INDEXES[@]}
 do
-	echo "f=$f"
 	argf=input_args/args$f.txt
 	if [[ ! -e $argf ]]
 	then	
@@ -252,7 +253,7 @@ done
 
 
 echo "# Results" >$OUTFILE
-printf "# student name,student number,index,filename ok,extension ok,exercice index ok,compile success,run_status:">>$OUTFILE
+printf "# student lastname,firstname,student number,index,filename ok,extension ok,exercice index ok,compile success,run_status:">>$OUTFILE
 for ((n=0;n<$NBTESTS; n++))
 do
 	printf ",$n">>$OUTFILE
@@ -268,6 +269,7 @@ printf ",compare_score\n">>$OUTFILE
 
 
 # 5 - LOOP START
+
 for a in src/*.$EXT
 do
 	bn=$(basename "$a")
@@ -276,7 +278,28 @@ do
 	num=${ADDR[1]}
 	na=${ADDR[4]}
 	echo "*** Processing student '$name', filename=$na"
-	printf "$name,$num" >> $OUTFILE
+
+	IFS=' ' read -ra NAME <<< "$name"
+	if [ ${#NAME[@]} -gt 3 ]
+	then
+		echo "Error: unable to handle name fields with more than 3 items: $name"
+		exit 10
+	fi
+
+	lname=${NAME[-1]};fname=${NAME[0]}
+	if [ ${#NAME[@]} = 3 ]
+	then
+		if [ $lnameIsLast = 0 ]
+		then
+			lname="${NAME[1]} ${NAME[-1]}"
+			fname=${NAME[0]}
+		else
+			lname=${NAME[-1]}
+			fname="${NAME[0]} ${NAME[1]}"
+		fi
+	fi
+	printf "$lname,$fname,$num" >> $OUTFILE
+
 # separate filename and extension
 	na1=${na%.*}
 	na2=${na#*.}
