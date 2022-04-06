@@ -147,7 +147,7 @@ then
 	exit 2
 fi
 
-# FLAGS
+# 1.1 - FLAGS
 noCheck=0
 stopOnEach=0
 verbose=0
@@ -198,6 +198,7 @@ do
 	if [ "$key" = "FILE" ];    then FILE=$value; fi
 	if [ "$key" = "EXT" ];     then EXT=$value; fi
 	if [ "$key" = "NBTESTS" ]; then NBTESTS=$value; fi
+	if [ "$key" = "OUTFILE" ]; then OUTFILE=$value; fi
 	if [ "$key" = "INDEXES" ]; then INDEXES=($value); fi
 done < "$PARAMS_FILE"
 

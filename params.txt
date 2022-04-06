@@ -18,9 +18,4 @@ OUTFILE=log.csv
 # number of tests for each assignement (must be the same for all the assignments)
 NBTESTS=4
 
-# compiler
-COMPILER=javac
-
-# interpreter
-INTERPRETER=java
 
