@@ -1,10 +1,23 @@
 #!/usr/bin/env bash 
 # (wip...)
 
-cp demo.zip .
-cp config_demo.txt ../config.txt
+# prepare environment
+mkdir -p tmp/exec
+mkdir -p tmp/expected
+mkdir -p tmp/input_args
+mkdir -p tmp/src
+
+cp jautograde.sh tmp/
+
+cd demo
+zip demo.zip *.java
+cp demo.zip ../tmp/
+cp config_demo.txt ../tmp/config.txt
+cp args?.txt ../tmp/input_args/
+cp stdout*.txt ../tmp/expected/
+
+# run program with demo stuff
+cd ../tmp/
 ./jautograde demo.zip
-cp args?.txt ../input_args/
-cp stdout*.txt ../expected/
 
 
