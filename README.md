@@ -23,7 +23,7 @@ Thus, the file they are required to upload must have a filename similar to:
 
 This bash script will automate the testing of each program, to see if it fullfilths the requirements that the given arguments produces a given output.
 
-This script will generate a CSV file holding all the results
+This script will generate a CSV file holding firstname, lastname, student id number, and 0 or 1 in following columns, for these items:
  - does the program have the required name?
  - does the program filename hold the assignment index at the correct position (i.e. at the end...)?
  - does the program filename hold the correct extension?
@@ -83,9 +83,9 @@ but this is ok:
 ./jautograde -n -s input.zip
 ```
 
-### Names with 3 words
+#### Names with 3 words
 
-For some reason; it seems that Moodle stores full names only in a single field, as "firstname lastname".
+For some reason, it seems that Moodle stores full names only in a single field, as "firstname lastname".
 This can be annoying when copying/pasting results to another spreadsheet document, because we usually use last names, and having the first name in first position makes it difficult to sort.
 
 For names with only 2 words ("John Doe"), it's easy to separate them into firstname and lastname into the output csv file.
@@ -103,7 +103,7 @@ You need to:
   2. provide the test arguments (one file per assignment index);
   3. provide the expected output for each line of the test scripts.
 
-### 1 - configuration
+### 1 - Configuration
 
 The general configuration is done through a separate text file named `config.txt`.
 Very basic, KEY=VALUE style (see provided one)
@@ -139,7 +139,6 @@ For each assignment index and each test case, you need to provide a file named `
 in the `expected` folder, with X the assignment index and Y the test case (corresponding to the given line in file `input_args/argsX.txt`).
 
 To avoid having failures for some minor differences between the expected output and the student program output, you can provide several files holding the different outputs that are accepted.
-
 For example, if you expect an output to be `5` (`int` value) but you consider that the output `5.0` (`float` value) is ok too, then you need to provide two files matching the pattern
 `stdoutXY*.txt`.
 For example `stdoutXYa.txt` and `stdoutXYb.txt`.
@@ -169,7 +168,8 @@ Well... I sorted of needed that kinda stuff to avoid checking for really basic s
 
 ### Why bash ???
 
-At one point I felt that my bash skills were too rusty. But, agree, pretty slow...
+At one point I felt that my bash skills were too rusty. Kinda slow, indeed, but given the context, that shouldn't be a problem.
+
 
 ### Could this be usable with other languages?
 
@@ -179,5 +179,5 @@ Maybe. C or C++, why not, but you might run into issues about passing the compil
 ### Any chance this will work on Windows?
 
 Can't say. There is some thing called WSL on Windows, maybe you can give it a try.
-Please let me know!
+Please let me know.
 
