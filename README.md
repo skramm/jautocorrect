@@ -9,7 +9,7 @@ Student Java code automatic grading
 
 - Input: zip file downloaded from a Moodle instance
 - Output: a csv file holding results of tests for each assignement/student
-- Usage: `./jautocorrect.sh [flags] input_file.zip`
+- Usage: `./jautocorrect.sh [options] input_file.zip`
 
 ## Context
 
@@ -35,9 +35,13 @@ This script will generate a CSV file holding firstname, lastname, student id num
 All of these informations is printed out in the output file that you can further upload into a spreadsheet application to compute a grade according to the points above that you consider relevant.
 
 ### Requirements
+
 - A bash shell
-- The diffutils GNU package (probably already available on your machine)
-- 
+- The [GNU diffutils](https://www.gnu.org/software/diffutils/) GNU package (probably already available on your machine).
+
+### Licence
+
+[GNU General Public License, v3](https://www.gnu.org/licenses/gpl-3.0.html)
 
 ## What this program does:
 
@@ -69,7 +73,7 @@ with:
 This format is given by my local Moodle instance/version, it might not be the same for you.
 This could be adjusted.
 
-## Flags
+## Command-line options
 
   - `-n`: no checking of produced output files
   - `-s`: stops after processing each program
@@ -200,6 +204,4 @@ Please let me know.
 ### Could this be used independently from Moodle (that is, by directly providing a zip file holding all the programs)?
 
 Yep, that could work but would require some tweaking of the file name extraction.
-Please post an issue describing your usecase, I'll see if I can fix that.
-
-That you pr
+Please [post an issue](https://github.com/skramm/jautograde/issues) describing your usecase, I'll see if I can fix that.
