@@ -1,0 +1,6 @@
+# arguments for assignment 5
+# first column is the number of arguments
+2 A 4.1
+2 B 9
+3 C 3 2 
+0

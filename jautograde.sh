@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash 
 set +x
 
 # homepage: https://github.com/skramm/jautocorrect

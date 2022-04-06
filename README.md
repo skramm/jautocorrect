@@ -6,13 +6,14 @@ Student Java code automatic grading
 
 
 
-## Goal: automate testing of student Java programs
+## Goal: automate testing of student small Java programs
 
 - Input: zip file downloaded from a Moodle instance
 - Output: a csv file holding results of tests for each assignement/student
 - Usage: `./jautocorrect.sh [flags] input_file.zip`
 
 ## Context
+
 Students are given an assignment:
 they need to write a small (single file) Java program that generates some console output, given some command-line arguments.
 When they are done, they upload the unique source file on a Moodle instance.

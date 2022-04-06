@@ -1,0 +1,21 @@
+# This file holds parameters that user needs to set
+# It is used by the main script jautograde.sh
+
+# homepage: https://github.com/skramm/jautocorrect
+
+# Required filename for the assignments (without added assignment index)
+FILE=Test
+
+# Required filename extension
+EXT=java
+
+# autorized assignment indexes: array of arbitrary integer digits
+INDEXES=5 6
+
+# output log file
+OUTFILE=log_demo.csv
+
+# number of tests for each assignement (must be the same for all the assignments)
+NBTESTS=3
+
+
