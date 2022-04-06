@@ -71,6 +71,7 @@ This could be adjusted.
   - `-v`: verbose mode: prints for each test both the expected output(s) and the produced output.
   - `-t`: store the student programs renamed with the extracted name into `exec/stored/<id-number>` (will be cleared by new run)
   - `-l`: change the way names with 3 words are handled (see below).
+  - `-p`: show parameters (loaded or default ones) and quit.
 
 
 The parser is pretty basic, so the flags must be given separately (but in any order), thus this will fail:
@@ -88,7 +89,7 @@ For some reason; it seems that Moodle stores full names only in a single field, 
 This can be annoying when copying/pasting results to another spreadsheet document, because we usually use last names, and having the first name in first position makes it difficult to sort.
 
 For names with only 2 words ("John Doe"), it's easy to separate them into firstname and lastname into the output csv file.
-But for names with 3 words ("John Something Doe"), we run into an issue: is the last name "Doe" or "Something Doe".
+But for names with 3 words ("John Something Doe"), we run into an issue: is the lastname "Doe" or "Something Doe".
 The default behavior is to consider that the lastname is "Something Doe", but you can change that by passing the `-l` switch.
 In that case, the lastname will be "Doe" and the firstname "John Something".
 
@@ -98,11 +99,23 @@ Please note that this script actually does not support names with more than 3 wo
 
 You need to:
 
-  1. edit the script and change variables `FILE`, `INDEXES`, `NBTESTS` as required;
+  1. configure the script
   2. provide the test arguments (one file per assignment index);
   3. provide the expected output for each line of the test scripts.
 
-### Providing test arguments
+### 1 - configuration
+
+The general configuration is done through a separate text file named `config.txt`.
+Very basic, KEY=VALUE style (see provided one)
+If that file is missing, or if a given key is not present, the program will use default ones.
+
+You need to provide:
+  - the expected name of the program: `FILE`,
+  - the expected indexes: `INDEXES`
+  - the number of tests: `NBTESTS`
+
+
+### 2 - Providing test arguments
 
 Each program is tested with different arguments, these need to be given for each assignment index in a file named `args1.txt` (or `args2.txt` for index=2, `args3.txt` for index=3,...), located in folder `input_args/`.
 These files will hold the command line arguments to be given, with as first element the number of arguments.
@@ -120,7 +133,7 @@ $ java Abc5.java A 42 > stdout51.txt
 ```
 Once this is done, the script will then compare the generated output files with the ones having the same name, in folder `expected/`.
 
-### Providing expected output
+### 3 - Providing expected output
 
 For each assignment index and each test case, you need to provide a file named `stdoutXY.txt`
 in the `expected` folder, with X the assignment index and Y the test case (corresponding to the given line in file `input_args/argsX.txt`).

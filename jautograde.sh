@@ -191,18 +191,25 @@ INTERPRETER=java
 
 # 2.2 - try to read them in file
 
-PARAMS_FILE=params.txt
-while IFS= read -r line
-do
-	IFS='=' read -ra PAR <<< "$line"
-	key=${PAR[0]}
-	value=${PAR[1]}
-	if [ "$key" = "FILE" ];    then FILE=$value; fi
-	if [ "$key" = "EXT" ];     then EXT=$value; fi
-	if [ "$key" = "NBTESTS" ]; then NBTESTS=$value; fi
-	if [ "$key" = "OUTFILE" ]; then OUTFILE=$value; fi
-	if [ "$key" = "INDEXES" ]; then INDEXES=($value); fi
-done < "$PARAMS_FILE"
+CONFIG_FILE=config.txt
+if [ ! -e $CONFIG_FILE ]
+then
+	echo " -No configuration file (`$CONFIG_FILE`) found, using default configuration"
+else
+	echo " -reading configuration parameters"
+	while IFS= read -r line
+	do
+		IFS='=' read -ra PAR <<< "$line"
+		key=${PAR[0]}
+		value=${PAR[1]}
+		echo "key=$key value=$value"
+		if [ "$key" = "FILE" ];    then FILE=$value; fi
+		if [ "$key" = "EXT" ];     then EXT=$value; fi
+		if [ "$key" = "NBTESTS" ]; then NBTESTS=$value; fi
+		if [ "$key" = "OUTFILE" ]; then OUTFILE=$value; fi
+		if [ "$key" = "INDEXES" ]; then INDEXES=("$value"); fi
+	done < "$CONFIG_FILE"
+fi
 
 # 2.3 - print them if asked for
 
