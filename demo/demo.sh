@@ -10,7 +10,7 @@ mkdir -p tmp/src
 cp jautograde.sh tmp/
 
 cd demo
-zip demo.zip *.java
+zip --quiet demo.zip *.java
 cp demo.zip ../tmp/
 cp config_demo.txt ../tmp/config.txt
 cp args?.txt ../tmp/input_args/
@@ -18,6 +18,6 @@ cp stdout*.txt ../tmp/expected/
 
 # run program with demo stuff
 cd ../tmp/
-./jautograde demo.zip
+./jautograde.sh demo.zip
 
 

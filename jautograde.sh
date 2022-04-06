@@ -205,7 +205,7 @@ else
 		IFS='=' read -ra PAR <<< "$line"
 		key=${PAR[0]}
 		value=${PAR[1]}
-		echo "key=$key value=$value"
+#		echo "key=$key value=$value"
 		if [ "$key" = "FILE" ];    then FILE=$value; fi
 		if [ "$key" = "EXT" ];     then EXT=$value; fi
 		if [ "$key" = "NBTESTS" ]; then NBTESTS=$value; fi
@@ -232,7 +232,7 @@ rm src/* 2>/dev/null
 rm -r exec/* 2>/dev/null
 unzip -q "$inputfn" -d src/
 nbfiles=$(ls -1| wc -l)
-echo "-processing $nbfiles input files"
+echo " -processing $nbfiles input files"
 nbcompile=0
 
 # 4 - CHECKING REQUIRED FILES
