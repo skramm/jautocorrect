@@ -2,8 +2,7 @@
 
 Student Java code automatic grading
 
-(This is work in progress !)
-
+(This is work in progress, stable release expected current april 2022)
 
 
 ## Goal: automate testing of student small Java programs
@@ -25,15 +24,20 @@ Thus, the file they are required to upload must have a filename similar to:
 This bash script will automate the testing of each program, to see if it fullfilths the requirements that the given arguments produces a given output.
 
 This script will generate a CSV file holding firstname, lastname, student id number, and 0 or 1 in following columns, for these items:
+
  - does the program have the required name?
- - does the program filename hold the assignment index at the correct position (i.e. at the end...)?
+ - does the program filename hold the assignment index at the correct position (i.e. at the end)?
  - does the program filename hold the correct extension?
  - does the program compile?
  - does the program run and return 0 as return value?
  - does the program generate the correct output for the given arguments?
 
-All of these informations is printed out in the output file that you can further upload into a spreadsheet application to process a grade according to the points above that you consider relevant.
+All of these informations is printed out in the output file that you can further upload into a spreadsheet application to compute a grade according to the points above that you consider relevant.
 
+### Requirements
+- A bash shell
+- The diffutils GNU package (probably already available on your machine)
+- 
 
 ## What this program does:
 
@@ -46,7 +50,7 @@ All of these informations is printed out in the output file that you can further
     - checks that file extension is correct (is the one given in assignment). If not, report it, and carry on. 
     - checks that program compiles (`javac`), if not report it in output file and switch to next one.
     - runs the provided test scripts and checks that return value is 0
-    - compare (`cmp`) the generated output with the provided output it should generate, and count the number of success. Report that count.
+    - compare (using the `diff` program) the generated output with the provided output it should generate, and count the number of success. Report that count.
 
 ## Input file
 The input zip file is assumed to contain a set of files matching the pattern:
@@ -83,6 +87,14 @@ but this is ok:
 ```
 ./jautograde -n -s input.zip
 ```
+#### Other options
+
+Comparison of expected output and generated output is done with the `diff` program.
+It has a lot of options that you may use, by storing them into the `diffOptions` variable (see top of program).
+One of the most useful (and the default) is probably `-b`, that both ignores trailing spaces and considers multiples space characters as a single one.
+
+For details, see https://www.gnu.org/software/diffutils/manual/diffutils.html#White-Space
+
 
 #### Names with 3 words
 
@@ -127,7 +139,7 @@ For example, this file content:
 0
 2 A 42
 ```
-will generated two runs of the program, one with no arguments, the other with 2 arguments, i.e. if the program name is `Abc` and the assignement index is 5, then this is equivalent to running this in the `exec/` folder:
+will generate two runs of the program, one with no arguments, the other with 2 arguments, i.e. if the program name is `Abc` and the assignement index is 5, then this is equivalent to running this in the `exec/` folder:
 ```
 $ java Abc5.java > stdout50.txt
 $ java Abc5.java A 42 > stdout51.txt
@@ -145,15 +157,12 @@ For example, if you expect an output to be `5` (`int` value) but you consider th
 For example `stdoutXYa.txt` and `stdoutXYb.txt`.
 
 
-## Tips
+#### Tips
 
 Point 3 above can be quite tedious.
 So what you can do is try passing the `-s` flags, and have a look at what the student program generates (in the `exec/` folder).
 If it fits, then just copy the files as is to the `expected/` folder!
 
-## I don't get it. You have a demo to show me?
-
-(TODO)
 
 ## Possibly / vaguely related stuff
 
@@ -167,9 +176,15 @@ If it fits, then just copy the files as is to the `expected/` folder!
 
 Well... I sorted of needed that kinda stuff to avoid checking for really basic stuff when grading the student works.
 
-### Why bash ???
+### I don't get it. You have a demo to show me?
+
+WIP !!
+
+### Why bash ? Why not Python or [name here latest hype language]?
 
 At one point I felt that my bash skills were too rusty. Kinda slow, indeed, but given the context, that shouldn't be a problem.
+
+And bash is stable, so old that it is not expected to have a new breaking release anytime soon.
 
 
 ### Could this be usable with other languages?

@@ -1,6 +1,9 @@
 #!/usr/bin/env bash 
 set +x
 
+# see manual on what you want to do here
+diffOptions=-b
+
 # homepage: https://github.com/skramm/jautocorrect
 # start of program: line 131
 
@@ -33,7 +36,7 @@ function compare
 				echo "  -comparing with required output:"
 				cat $j
 			fi
-			cmp -s $j exec/$fn2 	
+			diff $diffOptions $j exec/$fn2 >/dev/null
 			retval=$?
 			if [[ $retval = 0 ]]; then isGood=1; echo " -result: success"; break; fi
 		done
